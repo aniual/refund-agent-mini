@@ -1,8 +1,15 @@
 import { z } from 'zod';
+//执行工具
 
-export type ToolResult = {
-    success: boolean;
-    data?: unknown;
+export type ToolExecutionStatus =
+    | "success"
+    | "failed"
+    | "approval_required"
+    | "blocked";
+
+export type ToolResult<T = unknown> = {
+    status: ToolExecutionStatus;
+    data?: T;
     error?: string;
 }
 
@@ -13,8 +20,8 @@ export type ToolDefinition = {
     description: string;
     riskLevel: ToolRiskLevel;
     requiresApproval: boolean;
-    schema: z.ZodObject<any>;
-    execute: (args: any) => Promise<ToolResult>;
+    schema: z.ZodType;
+    execute: (args: unknown) => Promise<ToolResult>;
 }
 
 
@@ -28,16 +35,16 @@ export const tools: Record<string, ToolDefinition> = {
             shop: z.string(),
             days: z.number().int().positive(),
         }),
-        execute: async (args: any) => {
+        execute: async (args: unknown) => {
             const parsed = tools.getRefundSummary.schema.safeParse(args);
             if (!parsed.success) {
                 return {
-                    success: false,
+                    status: "failed",
                     error: "Invalid arguments for getRefundSummary",
                 };
             }
             return {
-                success: true,
+                status: "success",
                 data: {
                     shop: parsed.data.shop,
                     days: parsed.data.days,
@@ -60,16 +67,16 @@ export const tools: Record<string, ToolDefinition> = {
             days: z.number().int().positive(),
             limit: z.number().int().positive().default(5),
         }),
-        execute: async (args: any) => {
+        execute: async (args: unknown) => {
             const parsed = tools.getTopRefundProducts.schema.safeParse(args);
             if (!parsed.success) {
                 return {
-                    success: false,
+                    status: "failed",
                     error: "Invalid arguments for getTopRefundProducts",
                 };
             }
             return {
-                success: true,
+                status: "success",
                 data: [
                     {
                         productName: "Fabric Sofa Bed",
@@ -100,16 +107,16 @@ export const tools: Record<string, ToolDefinition> = {
             shop: z.string(),
             days: z.number().int().positive(),
         }),
-        execute: async (args: any) => {
+        execute: async (args: unknown) => {
             const parsed = tools.getRefundReasons.schema.safeParse(args);
             if (!parsed.success) {
                 return {
-                    success: false,
+                    status: "failed",
                     error: "Invalid arguments for getRefundReasons",
                 };
             }
             return {
-                success: true,
+                status: "success",
                 data: [
                     {
                         reason: "Size or dimension mismatch",
@@ -141,16 +148,16 @@ export const tools: Record<string, ToolDefinition> = {
             shop: z.string(),
             days: z.number().int().positive(),
         }),
-        execute: async (args: any) => {
+        execute: async (args: unknown) => {
             const parsed = tools.getRefundTrend.schema.safeParse(args);
             if (!parsed.success) {
                 return {
-                    success: false,
+                    status: "failed",
                     error: "Invalid arguments for getRefundTrend",
                 };
             }
             return {
-                success: true,
+                status: "success",
                 data: [
                     { "week": "Week 1", "refundAmount": 220 },
                     { "week": "Week 2", "refundAmount": 310 },
@@ -171,17 +178,17 @@ export const tools: Record<string, ToolDefinition> = {
             actionType: z.enum(["create_discount", "send_email", "create_ticket"]),
             reason: z.string(),
         }),
-        execute: async (args: any) => {
+        execute: async (args: unknown) => {
             const parsed = tools.createRefundActionDraft.schema.safeParse(args);
 
             if (!parsed.success) {
                 return {
-                    success: false,
+                    status: "failed",
                     error: "Invalid arguments for createRefundActionDraft",
                 };
             }
             return {
-                success: true,
+                status: "success",
                 data: {
                     status: "draft_created",
                     shop: parsed.data.shop,
