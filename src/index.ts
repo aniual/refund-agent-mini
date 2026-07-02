@@ -7,7 +7,7 @@ async function main() {
         autoApproveWriteTools: false,
     })
 
-    console.log(result.answer);
+    console.log("Agent Answer:", result.answer);
     console.log("\n--- Audit Logs ---");
     console.log(JSON.stringify(result.auditLogs, null, 2));
 }
