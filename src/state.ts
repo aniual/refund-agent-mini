@@ -51,11 +51,13 @@ export type AgentState = {
     actionDraft?: RefundActionDraft;
     pendingApproval?: ApprovalRequest;
     errors: string[];
+    failedToolAttempts: Record<string, number>;
 };
 
 export function createInitialAgentState(): AgentState {
     return {
         errors: [],
+        failedToolAttempts: {},
     };
 }
 

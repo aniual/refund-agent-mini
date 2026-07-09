@@ -4,7 +4,7 @@ async function main() {
     const result = await runRefundAgent({
         userInput: "Please analyze my Shopify store refund performance in the last 30 days.",
         maxSteps: 8,
-        autoApproveWriteTools: true,
+        autoApproveWriteTools: false,
     })
 
     console.log("Agent Answer:", JSON.stringify(result.report, null, 2));

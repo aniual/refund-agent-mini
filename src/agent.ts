@@ -1,4 +1,5 @@
 import { mockLlmDecide, type AgentMessage } from "./mockLlm.js";
+import { realLlmDecide } from "./realLlm.js";
 import { tools } from "./tools.js";
 import { applyToolResultToState, createInitialAgentState } from "./state.js";
 import { buildRefundAnalysisReport } from "./report.js";
@@ -52,7 +53,8 @@ After all required data is collected, produce a practical business analysis.
     for (let step = 1; step <= maxSteps; step++) {
         console.log(`\n--- Agent Step ${step} ---`);
 
-        const decision = await mockLlmDecide(state);
+        // const decision = await mockLlmDecide(state);
+        const decision = await realLlmDecide(state);
 
         trace.push({
             step,
@@ -157,7 +159,13 @@ After all required data is collected, produce a practical business analysis.
             if (result.status  === "success") {
                 applyToolResultToState(state, decision.toolName, result.data);
             }else{
-                state.errors.push(result.error ?? `Tool failed: ${decision.toolName}`);
+                const errorMessage = result.error ?? `Tool failed: ${decision.toolName}`
+                state.errors.push(errorMessage);
+                state.failedToolAttempts[decision.toolName] = (state.failedToolAttempts[decision.toolName] ?? 0) + 1;
+
+                if (state.failedToolAttempts[decision.toolName] >= 2) {
+                    throw new Error(`Tool ${decision.toolName} failed too many times: ${errorMessage}`);
+                }
             }
 
             auditLogs.push({

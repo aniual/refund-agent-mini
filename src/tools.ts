@@ -33,7 +33,7 @@ export const tools: Record<string, ToolDefinition> = {
         requiresApproval: false,
         schema: z.object({
             shop: z.string(),
-            days: z.number().int().positive(),
+            days: z.coerce.number().int().positive(),
         }),
         execute: async (args: unknown) => {
             const parsed = tools.getRefundSummary.schema.safeParse(args);
@@ -64,8 +64,8 @@ export const tools: Record<string, ToolDefinition> = {
         requiresApproval: false,
         schema: z.object({
             shop: z.string(),
-            days: z.number().int().positive(),
-            limit: z.number().int().positive().default(5),
+            days: z.coerce.number().int().positive(),
+            limit: z.coerce.number().int().positive().default(5),
         }),
         execute: async (args: unknown) => {
             const parsed = tools.getTopRefundProducts.schema.safeParse(args);
@@ -105,7 +105,7 @@ export const tools: Record<string, ToolDefinition> = {
         requiresApproval: false,
         schema: z.object({
             shop: z.string(),
-            days: z.number().int().positive(),
+            days: z.coerce.number().int().positive(),
         }),
         execute: async (args: unknown) => {
             const parsed = tools.getRefundReasons.schema.safeParse(args);
@@ -146,7 +146,7 @@ export const tools: Record<string, ToolDefinition> = {
         requiresApproval: false,
         schema: z.object({
             shop: z.string(),
-            days: z.number().int().positive(),
+            days: z.coerce.number().int().positive(),
         }),
         execute: async (args: unknown) => {
             const parsed = tools.getRefundTrend.schema.safeParse(args);

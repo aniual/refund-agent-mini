@@ -13,6 +13,7 @@
   "license": "ISC",
   "description": "",
   "dependencies": {
+    "openai": "^6.45.0",
     "zod": "^4.4.3"
   },
   "devDependencies": {
